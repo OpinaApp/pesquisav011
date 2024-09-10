@@ -64,21 +64,20 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
 
-    // Mostrar o botão apenas se o PWA não estiver instalado
-    if (!window.matchMedia('(display-mode: standalone)').matches) {
-        const btnInstalarApp = document.getElementById('btnInstalarApp');
-        if (btnInstalarApp) {
-            btnInstalarApp.style.display = 'block';
-        }
+    // Mostrar o botão apenas se o PWA não estiver instalado.
+    // Esta é uma aproximação, já que não podemos verificar diretamente se o PWA está instalado.
+    const btnInstalarApp = document.getElementById('btnInstalarApp');
+    if (btnInstalarApp) {
+        btnInstalarApp.style.display = 'block';
     }
 });
 
 document.getElementById('btnInstalarApp')?.addEventListener('click', () => {
-    // Ocultar o botão quando o usuário decide instalar o PWA
+    // Ocultar o botão quando o usuário decide instalar o PWA.
     const btnInstalarApp = document.getElementById('btnInstalarApp');
     btnInstalarApp.style.display = 'none';
 
-    // Mostrar o prompt de instalação
+    // Mostrar o prompt de instalação.
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then((choiceResult) => {
         if (choiceResult.outcome === 'accepted') {
@@ -93,7 +92,7 @@ document.getElementById('btnInstalarApp')?.addEventListener('click', () => {
 window.addEventListener('appinstalled', () => {
     console.log('A aplicação foi instalada.');
 
-    // Ocultar o botão após a instalação
+    // Ocultar o botão após a instalação.
     const btnInstalarApp = document.getElementById('btnInstalarApp');
     if (btnInstalarApp) {
         btnInstalarApp.style.display = 'none';
