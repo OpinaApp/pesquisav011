@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Oculta o campo 'semForssel' e seu título inicialmente
     document.getElementById('semForssel').style.display = 'none';
     document.querySelector('label[for="semForssel"]').style.display = 'none';
+
+    // Verifica se o PWA já está instalado e oculta o botão de instalação se for o caso
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+        document.getElementById('btnInstalarApp').style.display = 'none';
+    }
 });
 
 document.getElementById('formularioPesquisa').addEventListener('submit', function(e) {
@@ -31,7 +36,6 @@ document.getElementById('formularioPesquisa').addEventListener('submit', functio
         telefone: document.getElementById('telefone').value
     };
 
-
     // Gera uma chave única para cada entrada
     var chave = 'DadosFormulario_' + Date.now();
     // Armazena os dados no localStorage em formato de string JSON
@@ -40,20 +44,18 @@ document.getElementById('formularioPesquisa').addEventListener('submit', functio
     alert('Dados salvos com sucesso!');
 
     // Limpa manualmente cada campo
-    document.getElementById('regiao').value = '',
-    document.getElementById('nome').value = '',
-    document.getElementById('bairro').value = '',
-    document.getElementById('sexo').value = '',
-    document.getElementById('idade').value = '',
-    document.getElementById('avaliacaoGoverno').value = '',
-    document.getElementById('candidatosDisco').value = '',
-    document.getElementById('semForssel').value = '',
-    document.getElementById('problemaBairro').value = '',
-    document.getElementById('escolhaVereador').value = '',
-    document.getElementById('telefone').value = ''
+    document.getElementById('regiao').value = '';
+    document.getElementById('nome').value = '';
+    document.getElementById('bairro').value = '';
+    document.getElementById('sexo').value = '';
+    document.getElementById('idade').value = '';
+    document.getElementById('avaliacaoGoverno').value = '';
+    document.getElementById('candidatosDisco').value = '';
+    document.getElementById('semForssel').value = '';
+    document.getElementById('problemaBairro').value = '';
+    document.getElementById('escolhaVereador').value = '';
+    document.getElementById('telefone').value = '';
 });
-
-
 
 // CODIGO INSTALAÇÃO PERSONALIZADA -----------------------------------------------------------------
 let deferredPrompt;
@@ -62,20 +64,21 @@ window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
 
-    // Mostrar o botão apenas se o PWA não estiver instalado.
-    // Esta é uma aproximação, já que não podemos verificar diretamente se o PWA está instalado.
-    const btnInstalarApp = document.getElementById('btnInstalarApp');
-    if (btnInstalarApp) {
-        btnInstalarApp.style.display = 'block';
+    // Mostrar o botão apenas se o PWA não estiver instalado
+    if (!window.matchMedia('(display-mode: standalone)').matches) {
+        const btnInstalarApp = document.getElementById('btnInstalarApp');
+        if (btnInstalarApp) {
+            btnInstalarApp.style.display = 'block';
+        }
     }
 });
 
 document.getElementById('btnInstalarApp')?.addEventListener('click', () => {
-    // Ocultar o botão quando o usuário decide instalar o PWA.
+    // Ocultar o botão quando o usuário decide instalar o PWA
     const btnInstalarApp = document.getElementById('btnInstalarApp');
     btnInstalarApp.style.display = 'none';
 
-    // Mostrar o prompt de instalação.
+    // Mostrar o prompt de instalação
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then((choiceResult) => {
         if (choiceResult.outcome === 'accepted') {
@@ -90,7 +93,7 @@ document.getElementById('btnInstalarApp')?.addEventListener('click', () => {
 window.addEventListener('appinstalled', () => {
     console.log('A aplicação foi instalada.');
 
-    // Ocultar o botão após a instalação.
+    // Ocultar o botão após a instalação
     const btnInstalarApp = document.getElementById('btnInstalarApp');
     if (btnInstalarApp) {
         btnInstalarApp.style.display = 'none';
@@ -107,6 +110,7 @@ function verificarSenha() {
         alert("Senha incorreta!");
     }
 }
+
 // Botão Limpar Dados do Cache
 document.getElementById('btnLimparCache').addEventListener('click', function() {
     var senha = prompt("Digite a senha para limpar os dados salvos:");
@@ -149,18 +153,6 @@ function exportarDadosParaCSV() {
     var dataAtual = new Date().toISOString().slice(0,10); // Formato 'AAAA-MM-DD'
     var nomeArquivo = `dados_pesquisa_${nomePesquisador}_${dataAtual}.csv`;
 
-    var csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-    var cabeçalhos = Object.keys(dadosRecuperados[0]).join(",") + "\r\n";
-    csvContent += cabeçalhos;
-
-    dadosRecuperados.forEach(function(obj) {
-        var row = Object.values(obj).map(function(val){
-            // Assegura que strings com vírgulas sejam envoltas em aspas
-            return typeof val === 'string' ? `"${val.replace(/"/g, '""')}"` : val;
-        }).join(",");
-        csvContent += row + "\r\n";
-    });
-
     var encodedUri = encodeURI(csvContent);
     var link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -184,4 +176,3 @@ document.getElementById('candidatosDisco').addEventListener('change', function()
         labelSemForssel.style.display = 'none';
     }
 });
-
